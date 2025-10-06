@@ -23,12 +23,20 @@ document.addEventListener("keydown",e=>{
   player.style.left=playerX+"px";
 });
 
-function shoot(){
-  const b=document.createElement("div");
-  b.className="bullet";
-  b.style.left=(playerX+45)+"px";
-  b.style.bottom="120px";
-  gameArea.appendChild(b); bullets.push(b);
+function shoot() {
+  const bullet = document.createElement("div");
+  bullet.classList.add("bullet");
+
+  // Ambil posisi tengah player secara dinamis
+  const playerRect = player.getBoundingClientRect();
+  const gameRect = gameArea.getBoundingClientRect();
+  const bulletX = playerRect.left - gameRect.left + playerRect.width / 2 - 2.5; // -2.5 biar peluru di tengah (karena width bullet 5px)
+
+  bullet.style.left = bulletX + "px";
+  bullet.style.bottom = "120px";
+
+  gameArea.appendChild(bullet);
+  bullets.push(bullet);
 }
 
 function spawnEnemy(){
@@ -121,3 +129,4 @@ resetBtn?.addEventListener("click",()=>{
 });
 startBtn.addEventListener("click",startGame);
 pauseBtn.addEventListener("click",pauseGame);
+
