@@ -20,22 +20,31 @@
       </div>
     </div>
 
-    <div class="info-panel">
-      <h2>Rialo Space Shooter</h2>
-      <p>Score: <span id="score">0</span></p>
-      <p>Level: <span id="level">1</span></p>
-      <p>Best: <span id="highscore">0</span></p>
-      <button id="resetBtn" class="btn small">Reset Best</button>
-
-      <h3>How to Play</h3>
-      <ul>
-        <li>Move left or right using arrow keys.</li>
-        <li>Press Space to shoot incoming enemies.</li>
-        <li>Level up as your score increases — enemies get faster!</li>
-        <li>The game ends when the timer hits zero.</li>
-      </ul>
+<div class="info-panel">
+  <div class="card stats-card">
+    <h2>Rialo Space Shooter</h2>
+    <div class="stat">
+      <p><strong>Score:</strong> <span id="score">0</span></p>
+      <p><strong>Level:</strong> <span id="level">1</span></p>
+      <p><strong>Best:</strong> <span id="highscore">0</span></p>
     </div>
   </div>
+
+  <div class="card control-card">
+    <button id="resetBtn" class="btn small">Reset Best</button>
+    <p id="timerBox"><strong id="timer">Time: 60</strong></p>
+  </div>
+
+  <div class="card guide-card">
+    <h3>How to Play</h3>
+    <ul>
+      <li>Move left or right using arrow keys.</li>
+      <li>Press Space to shoot enemies.</li>
+      <li>Level up as your score increases — enemies get faster!</li>
+      <li>The game ends when the timer hits zero.</li>
+    </ul>
+  </div>
+</div>
 
   <script src="script.js"></script>
 </body>
