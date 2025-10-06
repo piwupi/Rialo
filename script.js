@@ -73,11 +73,19 @@ function spawnEnemy(){
   if (!gameRunning) return;
   const e = document.createElement("div");
   e.className = "enemy";
-  e.style.left = (Math.random() * (gameArea.clientWidth - 40)) + "px";
-  e.style.top  = "-40px";
+
+  // Random pilih tipe musuh
+  const type = Math.random() < 0.7 ? 1 : 2; // 70% musuh biasa, 30% bonus
+  e.dataset.type = type;
+  e.style.backgroundImage = `url('Enemy ${type}.png')`;
+
+  e.style.left = (Math.random() * (gameArea.clientWidth - 50)) + "px";
+  e.style.top  = "-50px";
+
   gameArea.appendChild(e);
   enemies.push(e);
 }
+
 
 // Loop
 function updateGame(){
