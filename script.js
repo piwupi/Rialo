@@ -57,12 +57,17 @@ function shoot() {
   const b = document.createElement("div");
   b.className = "bullet";
 
-  // X tepat di tengah pesawat (pakai state playerX)
-  const centerX = playerX + player.clientWidth / 2 - BULLET_W / 2;
+  // Rect absolut
+  const p = player.getBoundingClientRect();
+  const g = gameArea.getBoundingClientRect();
 
-  // Y pakai 'bottom' milik player (karena player absolute dengan bottom)
-  const playerBottom = parseFloat(getComputedStyle(player).bottom); // contoh: 40
-  const bulletBottom = playerBottom + player.clientHeight - 2;      // muncul tepat di atas pesawat
+  // Posisi X: tengah pesawat, relatif terhadap gameArea
+  const centerX = (p.left - g.left) + (p.width / 2) - (BULLET_W / 2);
+
+  // Posisi Y (bottom) yang benar:
+  // bottom = tinggiArea - (topRel + tinggiPlayer) + sedikit offset
+  const topRel = p.top - g.top;                          // jarak p dari atas gameArea
+  const bulletBottom = gameArea.clientHeight - (topRel + p.height) + 4;
 
   b.style.left   = centerX + "px";
   b.style.bottom = bulletBottom + "px";
@@ -70,6 +75,7 @@ function shoot() {
   gameArea.appendChild(b);
   bullets.push(b);
 }
+
 
 
 // ===== Enemies (two types, different points) =====
