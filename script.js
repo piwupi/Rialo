@@ -40,23 +40,33 @@ function movePlayer(dx){
 }
 
 // ===== Controls =====
-document.addEventListener("keydown", e => {
+document.addEventListener("keydown", (e) => {
   if (!gameRunning) return;
+
   if (e.key === "ArrowLeft")  movePlayer(-STEP);
   if (e.key === "ArrowRight") movePlayer(+STEP);
-  if (e.key === " ") { e.preventDefault(); shoot(); }
+
+  // deteksi Space yang konsisten di semua browser
+  if (e.code === "Space" || e.key === " " || e.key === "Spacebar") {
+    e.preventDefault();
+    shoot();
+  }
 });
 
 // ===== Shoot (center of ship) =====
-function shoot(){
+function shoot() {
   const b = document.createElement("div");
   b.className = "bullet";
 
-  const centerX = player.offsetLeft + player.clientWidth/2 - BULLET_W/2;
-  const bottom  = gameArea.clientHeight - (player.offsetTop + player.clientHeight);
+  // X tepat di tengah pesawat (pakai state playerX, bukan offsetLeft)
+  const centerX = playerX + player.clientWidth / 2 - BULLET_W / 2;
+
+  // Y: pakai nilai bottom si player (bukan offsetTop)
+  const playerBottom = parseInt(getComputedStyle(player).bottom, 10); // contoh: 40px
+  const bulletBottom = playerBottom + player.clientHeight - 5;        // muncul tepat di atas pesawat
 
   b.style.left   = centerX + "px";
-  b.style.bottom = bottom + "px";
+  b.style.bottom = bulletBottom + "px";
 
   gameArea.appendChild(b);
   bullets.push(b);
