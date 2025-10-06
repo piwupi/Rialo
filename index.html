@@ -3,35 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catch the Rialo</title>
+  <title>Rialo Space Shooter</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <div class="game-panel">
-      <div class="game-header">
-        <button id="startBtn" class="btn start">Start</button>
-        <button id="pauseBtn" class="btn pause" disabled>Pause</button>
-        <span id="timer">Time: 30</span>
+    <div class="game-area">
+      <div id="gameArea">
+        <div id="player"></div>
       </div>
 
-      <div id="gameArea">
-        <div id="logo"></div>
+      <div class="controls">
+        <button id="startBtn" class="btn">Start</button>
+        <button id="pauseBtn" class="btn" disabled>Pause</button>
+        <span id="timer">Time: 60</span>
       </div>
     </div>
 
     <div class="info-panel">
-      <h2>Catch the Rialo</h2>
+      <h2>Rialo Space Shooter</h2>
       <p>Score: <span id="score">0</span></p>
       <p>Level: <span id="level">1</span></p>
       <p>Best: <span id="highscore">0</span></p>
-      <button id="resetScore" class="btn small">Reset Best</button>
+      <button id="resetBtn" class="btn small">Reset Best</button>
 
       <h3>How to Play</h3>
       <ul>
-        <li>Click the moving logo inside the play area to earn points.</li>
-        <li>The higher the level, the faster it moves — stay sharp.</li>
-        <li>The game ends when the timer runs out. Can you beat your best?</li>
+        <li>Move left or right using arrow keys.</li>
+        <li>Press Space to shoot incoming enemies.</li>
+        <li>Level up as your score increases — enemies get faster!</li>
+        <li>The game ends when the timer hits zero.</li>
       </ul>
     </div>
   </div>
