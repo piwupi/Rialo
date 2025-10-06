@@ -6,12 +6,12 @@
 }
 
 body {
-  background: radial-gradient(circle at bottom, #071a2b, #000);
+  background: linear-gradient(180deg, #e6f8ff 0%, #bde5f3 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  color: #fff;
+  color: #00324d;
 }
 
 /* Layout */
@@ -29,6 +29,7 @@ body {
   }
 }
 
+/* Game area */
 .game-area {
   flex: 2;
   display: flex;
@@ -40,11 +41,11 @@ body {
   position: relative;
   width: 400px;
   height: 700px;
-  background: radial-gradient(ellipse at bottom, #071a2b, #000);
-  border: 2px solid #00ffff;
-  border-radius: 10px;
+  background: linear-gradient(180deg, #bdf2ff 0%, #8de4ff 100%);
+  border: 3px solid #00bcd4;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 0 25px #0ff3;
+  box-shadow: 0 0 25px #00bcd4a0;
 }
 
 /* Player */
@@ -58,39 +59,40 @@ body {
   background: url('logo.png') center/contain no-repeat;
 }
 
-/* Bullets */
+/* Bullet */
 .bullet {
   position: absolute;
   width: 5px;
   height: 20px;
-  background: #00ffff;
+  background: #00bcd4;
   border-radius: 2px;
-  box-shadow: 0 0 10px #0ff;
+  box-shadow: 0 0 10px #00bcd4;
 }
 
-/* Enemies */
+/* Enemy */
 .enemy {
   position: absolute;
   width: 40px;
   height: 40px;
-  background: #ff0044;
+  background: #ff1744;
   border-radius: 50%;
-  box-shadow: 0 0 15px #f04;
+  box-shadow: 0 0 10px #ff3d00;
 }
 
 /* Info panel */
 .info-panel {
   flex: 1;
-  background: #0b1622;
-  border: 2px solid #00ffff33;
+  background: #ffffffdd;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 0 20px #0ff2;
+  border: 2px solid #00bcd477;
+  box-shadow: 0 0 15px #00bcd433;
+  color: #00324d;
 }
 
 .info-panel h2 {
-  color: #00ffff;
-  margin-bottom: 8px;
+  color: #007a9b;
+  margin-bottom: 10px;
 }
 
 .info-panel ul {
@@ -109,20 +111,22 @@ body {
 }
 
 .btn {
-  background: #ffaa00;
+  background: #00bcd4;
   border: none;
   padding: 6px 14px;
   border-radius: 6px;
-  color: #000;
+  color: #fff;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
 }
+
 .btn:hover {
   opacity: 0.85;
 }
+
 .btn.small {
-  background: #222;
+  background: #0097a7;
   color: #fff;
   margin-top: 8px;
 }
