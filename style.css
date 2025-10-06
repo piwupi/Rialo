@@ -16,9 +16,9 @@ body{
   border:3px solid #00bcd4;border-radius:12px;overflow:hidden;box-shadow:0 0 25px #00bcd4a0
 }
 
-/* Player (Logo) */
+/* Player (Logo) — dikontrol penuh oleh JS */
 #player{
-  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  position:absolute;bottom:40px;left:0;
   width:90px;height:90px;background:url('logo.png') center/contain no-repeat
 }
 
