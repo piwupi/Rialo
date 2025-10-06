@@ -13,24 +13,25 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Judul besar -->
+  <header class="site-title">Rialo Space Shooter</header>
+
   <div class="container">
     <!-- LEFT: GAME -->
     <div class="game-area">
       <div id="gameArea">
-        <!-- background-2 ada di CSS lewat ::before -->
         <div id="player"></div>
+        <!-- Overlay instruksi -->
+        <div id="overlay" class="overlay">Press <span>Enter</span> to play</div>
       </div>
-      <div class="controls">
-        <button id="startBtn" class="btn">Start</button>
-        <button id="pauseBtn" class="btn" disabled>Pause</button>
-        <span id="timer">Time: 60</span>
-      </div>
+      <!-- (buttons dihapus) -->
+      <div class="time-mobile"><strong id="timer">Time: 60</strong></div>
     </div>
 
     <!-- RIGHT: INFO (white panels) -->
     <div class="info-panel">
       <div class="card stats-card">
-        <h2>Rialo Space Shooter</h2>
+        <h2>Stats</h2>
         <div class="stat">
           <p><strong>Score:</strong> <span id="score">0</span></p>
           <p><strong>Level:</strong> <span id="level">1</span></p>
@@ -38,17 +39,17 @@
         </div>
       </div>
 
-      <div class="card control-card">
-        <button id="resetBtn" class="btn small">Reset Best</button>
-        <p id="timerBox"><strong>Time:</strong> <span id="timerMirror">60</span></p>
+      <!-- Hanya Time di tengah -->
+      <div class="card time-card">
+        <div class="time-center"><strong>Time:&nbsp;</strong><span id="timerMirror">60</span></div>
       </div>
 
       <div class="card guide-card">
         <h3>How to Play</h3>
         <ul>
-          <li>Move with the arrow keys.</li>
-          <li>Press Space to shoot.</li>
-          <li>Enemy 1 = 1 point, Enemy 2 = 2 points.</li>
+          <li>Move with the <u>arrow keys</u>.</li>
+          <li>Press <u>Space</u> to shoot.</li>
+          <li><u>Enemy 1</u> = 1 point, <u>Enemy 2</u> = 2 points.</li>
           <li>Speed ramps up every 10 points.</li>
           <li>Timer hits zero = game over.</li>
         </ul>
