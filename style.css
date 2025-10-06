@@ -53,14 +53,31 @@ body{
 #gameArea > * { position:relative; z-index:1; }
 
 /* Overlay "Enter to play" */
-.overlay{
-  position:absolute; inset:0;
-  display:flex; align-items:center; justify-content:center;
-  background: rgba(0,0,0,.28);
-  color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.4);
-  font-size:14px; letter-spacing:.5px;
+#overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  font-size: 12px;
+  font-family: "Press Start 2P", system-ui, Arial, sans-serif;
+  padding: 20px;
+  z-index: 5;
 }
-.overlay span{ color:#00e0ff; }
+
+#overlay .text {
+  max-width: 90%;
+  white-space: nowrap;      /* Biar gak pindah baris */
+  overflow: hidden;         /* Prevent overflow */
+  text-overflow: ellipsis;  /* Kalau kepanjangan, potong */
+}
+
+#overlay span {
+  color: cyan;
+}
 
 /* Player */
 #player{
