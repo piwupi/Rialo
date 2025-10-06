@@ -52,31 +52,29 @@ body{
 /* Semua entitas game di atas background */
 #gameArea > * { position:relative; z-index:1; }
 
-/* Overlay "Enter to play" */
-#overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.4);
-  color: white;
-  font-size: 12px;
-  font-family: "Press Start 2P", system-ui, Arial, sans-serif;
-  padding: 20px;
-  z-index: 5;
+/* ===== Overlay Tengah (FINAL) ===== */
+#overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  background:rgba(0,0,0,.4);
+  color:#fff;
+  z-index:5;
 }
 
-#overlay .text {
-  max-width: 90%;
-  white-space: nowrap;      /* Biar gak pindah baris */
-  overflow: hidden;         /* Prevent overflow */
-  text-overflow: ellipsis;  /* Kalau kepanjangan, potong */
+#overlay .content{
+  font-family:"Press Start 2P", system-ui, Arial, sans-serif;
+  font-size:14px;
+  line-height:1.8;        /* rapi untuk 1/2 baris */
+  white-space:nowrap;      /* tidak pecah aneh */
 }
 
-#overlay span {
-  color: cyan;
+#overlay .content span{
+  color:#00e0ff;
+  padding:0 6px;          /* memberi jarak “Enter” dari kata di kiri/kanan */
 }
 
 /* Player */
