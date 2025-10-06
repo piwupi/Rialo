@@ -61,22 +61,17 @@ function shoot() {
   const p = player.getBoundingClientRect();
   const g = gameArea.getBoundingClientRect();
 
-  // Posisi X: tengah pesawat, relatif terhadap gameArea
+  // X: tengah pesawat relatif terhadap gameArea
   const centerX = (p.left - g.left) + (p.width / 2) - (BULLET_W / 2);
+  // Y: tepat di atas pesawat (pakai TOP, bukan bottom)
+  const topY = (p.top - g.top) - 10; // 10px di atas ujung pesawat
 
-  // Posisi Y (bottom) yang benar:
-  // bottom = tinggiArea - (topRel + tinggiPlayer) + sedikit offset
-  const topRel = p.top - g.top;                          // jarak p dari atas gameArea
-  const bulletBottom = gameArea.clientHeight - (topRel + p.height) + 4;
-
-  b.style.left   = centerX + "px";
-  b.style.bottom = bulletBottom + "px";
+  b.style.left = centerX + "px";
+  b.style.top  = topY   + "px";   // <-- pakai TOP
 
   gameArea.appendChild(b);
   bullets.push(b);
 }
-
-
 
 // ===== Enemies (two types, different points) =====
 function spawnEnemy(){
@@ -101,11 +96,16 @@ function updateGame(){
   if (!gameRunning) return;
 
   // bullets
-  bullets.forEach((b,i)=>{
-    const y = parseInt(b.style.bottom);
-    if (y > gameArea.clientHeight){ b.remove(); bullets.splice(i,1); }
-    else b.style.bottom = (y + speed.bullet) + "px";
-  });
+// bullets (pakai TOP, bergerak ke atas = top berkurang)
+bullets.forEach((b, i) => {
+  const y = parseInt(b.style.top);
+  if (y < -30) {               // sudah keluar layar atas
+    b.remove();
+    bullets.splice(i, 1);
+  } else {
+    b.style.top = (y - speed.bullet) + "px";
+  }
+});
 
   // enemies
   enemies.forEach((e,i)=>{
