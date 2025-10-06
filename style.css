@@ -38,7 +38,7 @@ body{
 }
 
 /* Semua entitas game di atas background */
-#gameArea > * { position:relative; z-index:1; }
+#gameArea > * { z-index: 1; }
 
 /* Player (Logo) — dikontrol JS */
 #player{
