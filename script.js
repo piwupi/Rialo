@@ -53,21 +53,16 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// ===== Shoot (center of ship) =====
 function shoot() {
   const b = document.createElement("div");
   b.className = "bullet";
 
-  // Ambil posisi absolut player & gameArea
-  const p = player.getBoundingClientRect();
-  const g = gameArea.getBoundingClientRect();
+  // X tepat di tengah pesawat (pakai state playerX)
+  const centerX = playerX + player.clientWidth / 2 - BULLET_W / 2;
 
-  // X tepat di tengah pesawat (relatif terhadap gameArea)
-  const centerX = (p.left - g.left) + (p.width / 2) - (BULLET_W / 2);
-
-  // Konversi ke 'bottom': bottom = tinggiArea - (topPlayerRelTop)
-  const topPlayerRelTop = p.top - g.top;               // jarak dari atas gameArea
-  const bulletBottom = gameArea.clientHeight - topPlayerRelTop - 2; // 2px di atas pesawat
+  // Y pakai 'bottom' milik player (karena player absolute dengan bottom)
+  const playerBottom = parseFloat(getComputedStyle(player).bottom); // contoh: 40
+  const bulletBottom = playerBottom + player.clientHeight - 2;      // muncul tepat di atas pesawat
 
   b.style.left   = centerX + "px";
   b.style.bottom = bulletBottom + "px";
@@ -75,6 +70,7 @@ function shoot() {
   gameArea.appendChild(b);
   bullets.push(b);
 }
+
 
 // ===== Enemies (two types, different points) =====
 function spawnEnemy(){
