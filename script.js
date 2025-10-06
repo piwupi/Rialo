@@ -1,4 +1,4 @@
-// Elements
+// ===== Elements =====
 const player = document.getElementById("player");
 const gameArea = document.getElementById("gameArea");
 const scoreEl = document.getElementById("score");
@@ -10,72 +10,66 @@ const timerEl = document.getElementById("timer");
 const timerMirror = document.getElementById("timerMirror");
 const resetBtn = document.getElementById("resetBtn");
 
-// State
+// ===== State =====
 let bullets = [], enemies = [];
 let score = 0, level = 1, timeLeft = 60, playerX = 0, gameRunning = false;
 let timer, spawnInterval, gameLoopId;
 let highscore = Number(localStorage.getItem("rialoHighscore") || 0);
 highscoreEl.textContent = highscore;
 
-// Speeds & constants
+// ===== Constants =====
 const speed = { bullet: 15, enemy: 3 }; // enemy bertahap makin cepat
 const STEP = 40;                         // langkah gerak pesawat (cepat)
 const BULLET_W = 5;                      // lebar peluru (untuk center)
 
-// Helpers
+// ===== Helpers =====
 const maxPlayerX = () => gameArea.clientWidth - player.clientWidth;
 function centerPlayer(){
   playerX = (gameArea.clientWidth - player.clientWidth) / 2;
   player.style.left = playerX + "px";
 }
 
-// --------- WRAP-AROUND MOVE ----------
+// Wrap-around movement
 function movePlayer(dx){
   const maxX = maxPlayerX();
   let next = playerX + dx;
-
-  // jika melewati kanan, masuk dari kiri
-  if (next > maxX) next = 0;
-  // jika melewati kiri, masuk dari kanan
-  if (next < 0)    next = maxX;
-
+  if (next > maxX) next = 0;     // kanan ke kiri
+  if (next < 0)    next = maxX;  // kiri ke kanan
   playerX = next;
   player.style.left = playerX + "px";
 }
-// -------------------------------------
 
-// Controls
+// ===== Controls =====
 document.addEventListener("keydown", e => {
   if (!gameRunning) return;
-
   if (e.key === "ArrowLeft")  movePlayer(-STEP);
   if (e.key === "ArrowRight") movePlayer(+STEP);
-  if (e.key === " ") { e.preventDefault(); shoot(); } // cegah scroll
+  if (e.key === " ") { e.preventDefault(); shoot(); }
 });
 
-// Shoot dari tengah logo
+// ===== Shoot (center of ship) =====
 function shoot(){
   const b = document.createElement("div");
   b.className = "bullet";
 
-  const centerX = player.offsetLeft + player.clientWidth / 2 - BULLET_W / 2;
+  const centerX = player.offsetLeft + player.clientWidth/2 - BULLET_W/2;
   const bottom  = gameArea.clientHeight - (player.offsetTop + player.clientHeight);
 
   b.style.left   = centerX + "px";
-  b.style.bottom = bottom  + "px";
+  b.style.bottom = bottom + "px";
 
   gameArea.appendChild(b);
   bullets.push(b);
 }
 
-// Enemies
+// ===== Enemies (two types, different points) =====
 function spawnEnemy(){
   if (!gameRunning) return;
   const e = document.createElement("div");
   e.className = "enemy";
 
-  // Random pilih tipe musuh
-  const type = Math.random() < 0.7 ? 1 : 2; // 70% musuh biasa, 30% bonus
+  // 70% Enemy 1 (1 point), 30% Enemy 2 (2 points)
+  const type = Math.random() < 0.7 ? 1 : 2;
   e.dataset.type = type;
   e.style.backgroundImage = `url('Enemy ${type}.png')`;
 
@@ -86,8 +80,7 @@ function spawnEnemy(){
   enemies.push(e);
 }
 
-
-// Loop
+// ===== Loop =====
 function updateGame(){
   if (!gameRunning) return;
 
@@ -105,33 +98,22 @@ function updateGame(){
     else e.style.top = (t + speed.enemy) + "px";
   });
 
-// bullet vs enemy
-bullets.forEach((b, bi) => {
-  enemies.forEach((e, ei) => {
-    const br = b.getBoundingClientRect();
-    const er = e.getBoundingClientRect();
-    if (br.left < er.right && br.right > er.left && br.top < er.bottom && br.bottom > er.top) {
-      const type = Number(e.dataset.type);
-      const points = type === 2 ? 2 : 1; // enemy 2 = 2 poin
+  // bullet vs enemy (type-based score)
+  bullets.forEach((b,bi)=>{
+    enemies.forEach((e,ei)=>{
+      const br=b.getBoundingClientRect(), er=e.getBoundingClientRect();
+      if (br.left<er.right && br.right>er.left && br.top<er.bottom && br.bottom>er.top){
+        const points = Number(e.dataset.type) === 2 ? 2 : 1;
+        e.remove(); b.remove(); enemies.splice(ei,1); bullets.splice(bi,1);
+        score += points; scoreEl.textContent = score;
 
-      e.remove();
-      b.remove();
-      enemies.splice(ei, 1);
-      bullets.splice(bi, 1);
-
-      score += points;
-      scoreEl.textContent = score;
-
-      // Naik level tiap kelipatan 10 poin
-      if (score % 10 === 0) {
-        level++;
-        levelEl.textContent = level;
-        speed.enemy += 0.7;
-        speed.bullet += 0.3;
+        if (score % 10 === 0){
+          level++; levelEl.textContent = level;
+          speed.enemy += 0.7; speed.bullet += 0.3;
+        }
       }
-    }
+    });
   });
-});
 
   // enemy hits player → game over
   enemies.forEach(e=>{
@@ -144,7 +126,7 @@ bullets.forEach((b, bi) => {
   gameLoopId = requestAnimationFrame(updateGame);
 }
 
-// Start / Pause / End
+// ===== Start / Pause / End =====
 function startGame(){
   if (gameRunning) return;
   gameRunning = true;
