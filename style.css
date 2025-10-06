@@ -20,16 +20,17 @@ body{
   --cyan:#00bcd4; --cyan-dark:#0097a7;
 }
 
-/* ===== Title ===== */
-.site-title{
-  margin-top:20px;
-  padding:10px 14px;
-  background:#ffffffd9;
-  border:2px solid rgba(0,0,0,.06);
-  border-radius:12px;
-  box-shadow:0 6px 16px rgba(0,0,0,.08);
-  font-size:20px;
-  letter-spacing:1px;
+/* ===== Title (Judul Game) ===== */
+.site-title {
+  margin-top: 25px;
+  font-size: 36px;              /* Lebih besar */
+  color: #E9E3D5;               /* Warna sesuai permintaan */
+  background: none;             /* Hapus latar belakang */
+  border: none;                 /* Hapus border */
+  box-shadow: none;             /* Hapus shadow */
+  padding: 0;                   /* Hilangkan padding default */
+  text-align: center;
+  letter-spacing: 1.5px;
 }
 
 /* ===== Layout ===== */
