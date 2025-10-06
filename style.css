@@ -1,67 +1,90 @@
-/* Bright theme */
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,Arial}
+/* ===== Base / Theme ===== */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
 body{
-  background:linear-gradient(180deg,#e6f8ff 0%,#bde5f3 100%);
-  height:100vh;display:flex;justify-content:center;align-items:center;color:#00324d
+  margin:0;
+  /* BACKGROUND PALING BELAKANG */
+  background: url('Background.png') center/cover fixed no-repeat;
+  color:#00324d;
+  font-family: "Press Start 2P", system-ui, Arial, sans-serif;
+  display:flex; justify-content:center; align-items:center;
 }
 
-/* Layout */
-.container{display:flex;gap:20px;width:92%;max-width:960px;flex-direction:column}
-@media (min-width:700px){.container{flex-direction:row}}
+/* Scale-friendly type (pixel font but smaller) */
+:root{
+  --px: 12px;         /* base size agar pixel font tetap terbaca */
+  --px-sm: 10px;
+  --px-lg: 14px;
+  --cyan:#00bcd4; --cyan-dark:#0097a7;
+}
+
+/* ===== Layout ===== */
+.container{display:flex;gap:20px;width:92%;max-width:980px;flex-direction:column}
+@media (min-width:760px){.container{flex-direction:row}}
 
 .game-area{flex:2;display:flex;flex-direction:column;align-items:center}
+
+/* Kotak game */
 #gameArea{
   position:relative;
-  width:400px;
-  height:700px;
-  background:url('Background.png') center/cover no-repeat; /* pakai gambar background */
-  border:3px solid #00bcd4;
+  width:400px;height:700px;
+  /* lapisan dasar terang (agar musuh/pesawat kontras) */
+  background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.65));
+  border:3px solid var(--cyan);
   border-radius:12px;
   overflow:hidden;
-  box-shadow:0 0 25px #00bcd4a0;
+  box-shadow:0 0 25px rgba(0,188,212,.5);
 }
-
-/* Enemy 1 & 2 pakai background image */
-.enemy{
-  position:absolute;
-  width:50px;
-  height:50px;
-  background-size:contain;
-  background-repeat:no-repeat;
-  background-position:center;
+/* BACKGROUND 2 di tengah game dengan opacity dikurangi */
+#gameArea::before{
+  content:"";
+  position:absolute; inset:0;
+  background: url('Background 2.png') center/cover no-repeat;
+  opacity:.25;             /* kurangi opacity supaya objek jelas */
+  pointer-events:none;
 }
+/* pastikan entitas game di atas background */
+#gameArea > * { position:relative; z-index:1; }
 
+/* Player (Logo) — dikontrol penuh oleh JS */
 #player{
-  position:absolute;
-  bottom:40px;
-  left:0;                  /* penting: biar JS pakai left murni */
-  width:90px;
-  height:90px;
+  position:absolute; bottom:40px; left:0;
+  width:90px; height:90px;
   background:url('logo.png') center/contain no-repeat;
 }
-/* Bullets & Enemies */
+
+/* Bullets */
 .bullet{
-  position:absolute;width:5px;height:20px;background:#00bcd4;border-radius:2px;box-shadow:0 0 10px #00bcd4
+  position:absolute; width:5px; height:20px;
+  background:var(--cyan); border-radius:2px; box-shadow:0 0 10px var(--cyan);
 }
+
+/* Enemies pakai PNG tanpa latar */
 .enemy{
-  position:absolute;width:40px;height:40px;background:#ff1744;border-radius:50%;box-shadow:0 0 10px #ff3d00
+  position:absolute; width:50px; height:50px;
+  background-position:center; background-repeat:no-repeat; background-size:contain;
+  background-color:transparent!important; border-radius:0!important; box-shadow:none!important;
 }
 
 /* Controls */
-.controls{display:flex;justify-content:space-between;align-items:center;width:400px;margin-top:10px}
-.btn{background:#00bcd4;border:none;padding:6px 14px;border-radius:6px;color:#fff;font-weight:600;cursor:pointer}
-.btn:hover{opacity:.88}
-.btn.small{background:#0097a7}
-
-/* Right panel as cards */
-.info-panel{flex:1;display:flex;flex-direction:column;gap:15px}
-.card{
-  background:#ffffffee;border:2px solid #00bcd4aa;border-radius:12px;
-  box-shadow:0 0 15px #00bcd420;padding:16px 18px
+.controls{display:flex;justify-content:space-between;align-items:center;width:400px;margin-top:10px;font-size:var(--px)}
+.btn{
+  background:var(--cyan); border:none; padding:8px 14px; border-radius:6px;
+  color:#fff; cursor:pointer; font-size:var(--px); letter-spacing:.5px;
 }
-.stats-card h2{color:#007a9b;margin:0 0 8px}
-.stat p{margin:4px 0}
-.control-card{display:flex;justify-content:space-between;align-items:center}
+.btn:hover{filter:brightness(.95)}
+.btn.small{background:var(--cyan-dark)}
+
+/* ===== Right panel (WHITE cards) ===== */
+.info-panel{flex:1;display:flex;flex-direction:column;gap:16px}
+.card{
+  background:#fff; border:2px solid rgba(0,0,0,.08); border-radius:12px;
+  box-shadow:0 6px 16px rgba(0,0,0,.08); padding:16px 18px;
+}
+.stats-card h2{color:#007a9b;margin:0 0 10px;font-size:var(--px-lg)}
+.stat p{margin:6px 0;font-size:var(--px)}
+.control-card{display:flex;justify-content:space-between;align-items:center;font-size:var(--px)}
 #timerBox{color:#005f73}
-.guide-card h3{color:#007a9b;margin:0 0 6px}
-.guide-card ul{margin-left:18px;line-height:1.6}
+.guide-card h3{color:#007a9b;margin:0 0 10px;font-size:var(--px)}
+.guide-card ul{margin:0 0 0 18px;line-height:1.6;font-size:var(--px-sm)}
+.guide-card li{margin-bottom:6px}
