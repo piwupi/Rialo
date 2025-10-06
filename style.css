@@ -1,148 +1,193 @@
 /* ===== Base / Theme ===== */
 * { box-sizing: border-box; }
 html, body { height: 100%; }
-body{
-  margin:0;
+body {
+  margin: 0;
+  padding-top: 40px;  /* 🔸 tambahkan jarak atas global */
   background: url('Background.png') center/cover fixed no-repeat;
-  color:#00324d;
+  color: #00324d;
   font-family: "Press Start 2P", system-ui, Arial, sans-serif;
-  display:flex; flex-direction:column; gap:18px;
-  align-items:center; justify-content:flex-start;
-  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+  justify-content: flex-start;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   user-select: none;
 }
 
 /* Pixel font sizing */
-:root{
+:root {
   --px: 12px;
   --px-sm: 10px;
   --px-lg: 14px;
-  --cyan:#00bcd4; --cyan-dark:#0097a7;
+  --cyan:#00bcd4;
+  --cyan-dark:#0097a7;
 }
 
 /* ===== Title (Judul Game) ===== */
 .site-title {
-  margin-top: 25px;
-  font-size: 76px;              /* Lebih besar */
-  color: #E9E3D5;               /* Warna sesuai permintaan */
-  background: none;             /* Hapus latar belakang */
-  border: none;                 /* Hapus border */
-  box-shadow: none;             /* Hapus shadow */
-  padding: 0;                   /* Hilangkan padding default */
+  font-size: 76px;
+  color: #E9E3D5;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
   text-align: center;
   letter-spacing: 1.5px;
+  margin-bottom: 10px;
 }
 
 /* ===== Layout ===== */
-/* ===== Layout (centered) ===== */
-.container{
-  /* dari flex → grid supaya gampang disejajarkan */
-  display:grid;
-  grid-template-columns: 400px minmax(300px, 360px); /* kolom: game | panel kanan */
-  gap:28px;
-  justify-content:center;   /* seluruh grid di tengah halaman */
-  align-items:start;        /* align atas agar panel segaris dengan game */
-  width:92%;
-  max-width:980px;
-  margin-inline:auto;
+.container {
+  display: flex;
+  gap: 20px;
+  width: 92%;
+  max-width: 980px;
+  flex-direction: column;
+  margin-top: 40px; /* 🔸 game dan panel turun */
 }
 
-.game-area{
-  display:flex;
-  flex-direction:column;
-  align-items:center;  /* pastikan kotak game benar-benar center di kolomnya */
+@media (min-width: 760px) {
+  .container {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 60px; /* 🔸 layar besar juga turun */
+  }
 }
 
-.info-panel{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-  width:100%;          /* kartu mengisi kolom kanan */
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.info-panel .card{ width:100%; }
 
-/* Kotak game — sisi (border) putih */
-#gameArea{
-  position:relative;
-  width:400px; height:700px;
+.info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+.info-panel .card { width: 100%; }
+
+/* Kotak game */
+#gameArea {
+  position: relative;
+  width: 400px;
+  height: 700px;
   background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.72));
-  border:3px solid #ffffff;               /* putih */
-  border-radius:12px;
-  overflow:hidden;
-  box-shadow:0 0 22px rgba(0,188,212,.55); /* glow tetap biru lembut */
+  border: 3px solid #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 22px rgba(0,188,212,.55);
 }
 
-/* Semua entitas game di atas background */
-#gameArea > * { position:relative; z-index:1; }
+#gameArea > * { position: relative; z-index: 1; }
 
-/* ===== Overlay Tengah (FINAL, satu versi) ===== */
-#overlay{
-  position:absolute; inset:0;
-  display:flex; justify-content:center; align-items:center;
-  text-align:center;
-  background:rgba(0,0,0,.45);
-  color:#fff; z-index:5;
+/* ===== Overlay ===== */
+#overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: rgba(0,0,0,.45);
+  color: #fff;
+  z-index: 5;
 }
-#overlay .content{
-  font-family:"Press Start 2P", system-ui, Arial, sans-serif;
-  font-size:14px; line-height:1.8;
-  white-space:nowrap;         /* tidak pecah-pecah aneh */
+#overlay .content {
+  font-family: "Press Start 2P", system-ui, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: nowrap;
 }
-#overlay .content span{ color:#00e0ff; padding:0 6px; }
+#overlay .content span {
+  color: #00e0ff;
+  padding: 0 6px;
+}
 
 /* ===== Entities ===== */
-#player{
-  position:absolute; bottom:40px; left:0;
-  width:90px; height:90px;
-  background:url('logo.png') center/contain no-repeat;
+#player {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  width: 90px;
+  height: 90px;
+  background: url('logo.png') center/contain no-repeat;
   image-rendering: pixelated;
-  z-index:2;
+  z-index: 2;
 }
 
-.bullet{
-  position:absolute; width:5px; height:20px;
-  background:var(--cyan); border-radius:2px; box-shadow:0 0 10px var(--cyan);
-  z-index:3;
+.bullet {
+  position: absolute;
+  width: 5px;
+  height: 20px;
+  background: var(--cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--cyan);
+  z-index: 3;
 }
 
-.enemy{
-  position:absolute; width:50px; height:50px;
-  background-position:center; background-repeat:no-repeat; background-size:contain;
+.enemy {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
   image-rendering: pixelated;
-  z-index:2;
+  z-index: 2;
 }
 
-/* ===== Cards (panel kanan/bawah) ===== */
-.info-panel{flex:1;display:flex;flex-direction:column;gap:16px}
+/* ===== Cards ===== */
+.info-panel { flex: 1; display: flex; flex-direction: column; gap: 16px; }
 
-.card{
-  background:#fff;
-  border:2px solid rgba(0,0,0,.08);
-  border-radius:12px;
-  box-shadow:0 6px 16px rgba(0,0,0,.08);
-  padding:16px 18px;
+.card {
+  background: #fff;
+  border: 2px solid rgba(0,0,0,.08);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+  padding: 16px 18px;
 }
 
-.stats-card h2{color:#007a9b;margin:0 0 10px;font-size:var(--px-lg)}
-.stat p{margin:6px 0;font-size:var(--px)}
-
-.time-card .time-center{
-  width:100%; text-align:center; font-size:var(--px-lg);
+.stats-card h2 {
+  color: #007a9b;
+  margin: 0 0 10px;
+  font-size: var(--px-lg);
 }
 
-/* How to Play list rata kiri */
-.guide-card h3{color:#007a9b;margin:0 0 10px;font-size:var(--px-lg)}
-.guide-card ul{ margin:0 0 0 18px; line-height:1.8; font-size:var(--px); text-align:left; }
-.guide-card li{ margin-bottom:6px; }
+.stat p { margin: 6px 0; font-size: var(--px); }
 
-/* ===== Responsif (mobile portrait) ===== */
-@media (max-width: 900px){
-  .container{
-    grid-template-columns: 1fr;  /* tumpuk vertikal */
-    justify-content:center;
+.time-card .time-center {
+  width: 100%;
+  text-align: center;
+  font-size: var(--px-lg);
+}
+
+.guide-card h3 {
+  color: #007a9b;
+  margin: 0 0 10px;
+  font-size: var(--px-lg);
+}
+.guide-card ul {
+  margin: 0 0 0 18px;
+  line-height: 1.8;
+  font-size: var(--px);
+  text-align: left;
+}
+.guide-card li { margin-bottom: 6px; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+    justify-content: center;
   }
-  .info-panel{
-    max-width: 400px;   /* lebar kartu mengikuti game */
-    margin: 0 auto;     /* tetap center */
+  .info-panel {
+    max-width: 400px;
+    margin: 0 auto;
   }
 }
