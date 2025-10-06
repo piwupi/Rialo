@@ -8,11 +8,13 @@ body{
   color:#00324d;
   font-family: "Press Start 2P", system-ui, Arial, sans-serif;
   display:flex; justify-content:center; align-items:center;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  user-select: none;
 }
 
-/* Scale-friendly type (pixel font but smaller) */
+/* Pixel font sizing */
 :root{
-  --px: 12px;         /* base size agar pixel font tetap terbaca */
+  --px: 12px;
   --px-sm: 10px;
   --px-lg: 14px;
   --cyan:#00bcd4; --cyan-dark:#0097a7;
@@ -24,39 +26,34 @@ body{
 
 .game-area{flex:2;display:flex;flex-direction:column;align-items:center}
 
-/* Kotak game */
+/* Kotak game (TANPA background-2) */
 #gameArea{
   position:relative;
-  width:400px;height:700px;
-  /* lapisan dasar terang (agar musuh/pesawat kontras) */
-  background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.65));
+  width:400px; height:700px;
+  background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.72));
   border:3px solid var(--cyan);
   border-radius:12px;
   overflow:hidden;
   box-shadow:0 0 25px rgba(0,188,212,.5);
 }
-/* BACKGROUND 2 di tengah game dengan opacity dikurangi */
-#gameArea::before{
-  content:"";
-  position:absolute; inset:0;
-  background: url('Background 2.png') center/cover no-repeat;
-  opacity:.25;             /* kurangi opacity supaya objek jelas */
-  pointer-events:none;
-}
-/* pastikan entitas game di atas background */
+
+/* Semua entitas game di atas background */
 #gameArea > * { position:relative; z-index:1; }
 
-/* Player (Logo) — dikontrol penuh oleh JS */
+/* Player (Logo) — dikontrol JS */
 #player{
   position:absolute; bottom:40px; left:0;
   width:90px; height:90px;
   background:url('logo.png') center/contain no-repeat;
+  image-rendering: pixelated;
+  z-index:2;
 }
 
 /* Bullets */
 .bullet{
   position:absolute; width:5px; height:20px;
   background:var(--cyan); border-radius:2px; box-shadow:0 0 10px var(--cyan);
+  z-index:3; /* paling atas */
 }
 
 /* Enemies pakai PNG tanpa latar */
@@ -64,16 +61,22 @@ body{
   position:absolute; width:50px; height:50px;
   background-position:center; background-repeat:no-repeat; background-size:contain;
   background-color:transparent!important; border-radius:0!important; box-shadow:none!important;
+  image-rendering: pixelated;
+  z-index:2;
 }
 
 /* Controls */
-.controls{display:flex;justify-content:space-between;align-items:center;width:400px;margin-top:10px;font-size:var(--px)}
+.controls{
+  display:flex; justify-content:space-between; align-items:center;
+  width:400px; margin-top:10px; font-size:var(--px);
+}
 .btn{
   background:var(--cyan); border:none; padding:8px 14px; border-radius:6px;
   color:#fff; cursor:pointer; font-size:var(--px); letter-spacing:.5px;
 }
-.btn:hover{filter:brightness(.95)}
-.btn.small{background:var(--cyan-dark)}
+.btn:hover{ filter:brightness(.95) }
+.btn:active{ transform:translateY(1px) }
+.btn.small{ background:var(--cyan-dark) }
 
 /* ===== Right panel (WHITE cards) ===== */
 .info-panel{flex:1;display:flex;flex-direction:column;gap:16px}
@@ -88,3 +91,9 @@ body{
 .guide-card h3{color:#007a9b;margin:0 0 10px;font-size:var(--px)}
 .guide-card ul{margin:0 0 0 18px;line-height:1.6;font-size:var(--px-sm)}
 .guide-card li{margin-bottom:6px}
+
+/* ===== Responsif (mobile portrait) ===== */
+@media (max-width:420px){
+  #gameArea{ width:320px; height:560px; }
+  .controls{ width:320px; }
+}
