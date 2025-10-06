@@ -11,47 +11,58 @@ const timerMirror = document.getElementById("timerMirror");
 const resetBtn = document.getElementById("resetBtn");
 
 // State
-let bullets=[], enemies=[];
-let score=0, level=1, timeLeft=60, playerX=0, gameRunning=false;
+let bullets = [], enemies = [];
+let score = 0, level = 1, timeLeft = 60, playerX = 0, gameRunning = false;
 let timer, spawnInterval, gameLoopId;
 let highscore = Number(localStorage.getItem("rialoHighscore") || 0);
 highscoreEl.textContent = highscore;
 
 // Speeds & constants
-const speed = { bullet: 15, enemy: 3 };
-const STEP = 40;        // player move step (cepat)
-const BULLET_W = 5;     // lebar peluru untuk center
+const speed = { bullet: 15, enemy: 3 }; // enemy bertahap makin cepat
+const STEP = 40;                         // langkah gerak pesawat (cepat)
+const BULLET_W = 5;                      // lebar peluru (untuk center)
 
 // Helpers
-const clamp = (v,min,max) => Math.max(min, Math.min(max, v));
 const maxPlayerX = () => gameArea.clientWidth - player.clientWidth;
-
 function centerPlayer(){
   playerX = (gameArea.clientWidth - player.clientWidth) / 2;
   player.style.left = playerX + "px";
 }
 
+// --------- WRAP-AROUND MOVE ----------
+function movePlayer(dx){
+  const maxX = maxPlayerX();
+  let next = playerX + dx;
+
+  // jika melewati kanan, masuk dari kiri
+  if (next > maxX) next = 0;
+  // jika melewati kiri, masuk dari kanan
+  if (next < 0)    next = maxX;
+
+  playerX = next;
+  player.style.left = playerX + "px";
+}
+// -------------------------------------
+
 // Controls
 document.addEventListener("keydown", e => {
   if (!gameRunning) return;
 
-  if (e.key === "ArrowLeft")  playerX = clamp(playerX - STEP, 0, maxPlayerX());
-  if (e.key === "ArrowRight") playerX = clamp(playerX + STEP, 0, maxPlayerX());
-  if (e.key === " ") { e.preventDefault(); shoot(); }
-
-  player.style.left = playerX + "px";
+  if (e.key === "ArrowLeft")  movePlayer(-STEP);
+  if (e.key === "ArrowRight") movePlayer(+STEP);
+  if (e.key === " ") { e.preventDefault(); shoot(); } // cegah scroll
 });
 
-// Shoot from exact center of the ship
+// Shoot dari tengah logo
 function shoot(){
   const b = document.createElement("div");
   b.className = "bullet";
 
-  const centerX = player.offsetLeft + player.clientWidth/2 - BULLET_W/2;
+  const centerX = player.offsetLeft + player.clientWidth / 2 - BULLET_W / 2;
   const bottom  = gameArea.clientHeight - (player.offsetTop + player.clientHeight);
 
   b.style.left   = centerX + "px";
-  b.style.bottom = bottom + "px";
+  b.style.bottom = bottom  + "px";
 
   gameArea.appendChild(b);
   bullets.push(b);
@@ -103,7 +114,7 @@ function updateGame(){
     });
   });
 
-  // enemy hits player => game over
+  // enemy hits player → game over
   enemies.forEach(e=>{
     const er=e.getBoundingClientRect(), pr=player.getBoundingClientRect();
     if (er.left<pr.right && er.right>pr.left && er.top<pr.bottom && er.bottom>pr.top){
@@ -127,10 +138,10 @@ function startGame(){
 
   startBtn.disabled = true; pauseBtn.disabled = false;
 
-  // bersih & posisikan player di TENGAH
+  // reset & center ship
   gameArea.querySelectorAll(".bullet,.enemy").forEach(el=>el.remove());
   bullets=[]; enemies=[];
-  centerPlayer();                      // <- kunci: benar-benar di tengah
+  centerPlayer();
 
   spawnInterval = setInterval(spawnEnemy, 900);
   timer = setInterval(()=>{
@@ -142,33 +153,26 @@ function startGame(){
 
   updateGame();
 }
-
 function pauseGame(){
   gameRunning = false;
   clearInterval(timer); clearInterval(spawnInterval);
   cancelAnimationFrame(gameLoopId);
   startBtn.disabled = false; pauseBtn.disabled = true;
 }
-
 function endGame(hit){
   gameRunning = false;
   clearInterval(timer); clearInterval(spawnInterval);
   cancelAnimationFrame(gameLoopId);
-
   alert(hit ? "You got hit! Game over!" : `Time’s up! Final Score: ${score}`);
-
-  if (score > highscore){
-    localStorage.setItem("rialoHighscore", score);
-    highscoreEl.textContent = score;
-    highscore = score;
-  }
+  const best = Number(localStorage.getItem("rialoHighscore") || 0);
+  if (score > best){ localStorage.setItem("rialoHighscore", score); highscoreEl.textContent = score; }
   startBtn.disabled = false; pauseBtn.disabled = true;
 }
 
 // Buttons & resize
 resetBtn?.addEventListener("click", ()=>{
   localStorage.removeItem("rialoHighscore");
-  highscore = 0; highscoreEl.textContent = 0;
+  highscoreEl.textContent = 0;
 });
 startBtn.addEventListener("click", startGame);
 pauseBtn.addEventListener("click", pauseGame);
