@@ -105,22 +105,33 @@ function updateGame(){
     else e.style.top = (t + speed.enemy) + "px";
   });
 
-  // bullet vs enemy
-  bullets.forEach((b,bi)=>{
-    enemies.forEach((e,ei)=>{
-      const br=b.getBoundingClientRect(), er=e.getBoundingClientRect();
-      if (br.left<er.right && br.right>er.left && br.top<er.bottom && br.bottom>er.top){
-        e.remove(); b.remove();
-        enemies.splice(ei,1); bullets.splice(bi,1);
-        score++; scoreEl.textContent = score;
+// bullet vs enemy
+bullets.forEach((b, bi) => {
+  enemies.forEach((e, ei) => {
+    const br = b.getBoundingClientRect();
+    const er = e.getBoundingClientRect();
+    if (br.left < er.right && br.right > er.left && br.top < er.bottom && br.bottom > er.top) {
+      const type = Number(e.dataset.type);
+      const points = type === 2 ? 2 : 1; // enemy 2 = 2 poin
 
-        if (score % 10 === 0){
-          level++; levelEl.textContent = level;
-          speed.enemy += 0.7; speed.bullet += 0.3;
-        }
+      e.remove();
+      b.remove();
+      enemies.splice(ei, 1);
+      bullets.splice(bi, 1);
+
+      score += points;
+      scoreEl.textContent = score;
+
+      // Naik level tiap kelipatan 10 poin
+      if (score % 10 === 0) {
+        level++;
+        levelEl.textContent = level;
+        speed.enemy += 0.7;
+        speed.bullet += 0.3;
       }
-    });
+    }
   });
+});
 
   // enemy hits player → game over
   enemies.forEach(e=>{
