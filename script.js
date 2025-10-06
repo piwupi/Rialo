@@ -22,49 +22,47 @@ const savedBest = Number(localStorage.getItem("rialoHighscore") || 0);
 highscoreEl.textContent = savedBest;
 
 // ===== Constants =====
-const speed = { bullet: 15, enemy: 3 }; // kecepatan awal
-const STEP = 40;                         // langkah gerak player
-const BULLET_W = 5;                      // lebar peluru (untuk center)
+const speed = { bullet: 15, enemy: 3 };
+const STEP = 40;
+const BULLET_W = 5;
 
 // ===== Helpers =====
 const maxPlayerX = () => gameArea.clientWidth - player.clientWidth;
-
 function centerPlayer() {
   playerX = (gameArea.clientWidth - player.clientWidth) / 2;
   player.style.left = playerX + "px";
 }
-
 function showOverlay(html) {
   const text = html || 'Press <span>Enter</span> to play';
   overlay.innerHTML = `<div class="content">${text}</div>`;
   overlay.style.display = "flex";
 }
-
-function hideOverlay() {
-  overlay.style.display = "none";
-}
+function hideOverlay() { overlay.style.display = "none"; }
 
 // ===== Controls =====
 document.addEventListener("keydown", (e) => {
-  // Enter untuk mulai saat belum running
+  // ENTER untuk mulai / restart
   if (!gameRunning && (e.code === "Enter" || e.key === "Enter")) {
-    e.preventDefault();
-    startGame();
-    return;
+    e.preventDefault(); startGame(); return;
   }
   if (!gameRunning) return;
 
+  // Gerak
   if (e.key === "ArrowLeft")  movePlayer(-STEP);
   if (e.key === "ArrowRight") movePlayer(+STEP);
 
-  // Space untuk menembak
+  // Tembak
   if (e.code === "Space" || e.key === " " || e.key === "Spacebar") {
-    e.preventDefault();
-    shoot();
+    e.preventDefault(); shoot();
   }
 });
 
-// Wrap-around movement (kanan tembus kiri & sebaliknya)
+// Start lewat klik overlay (biar pasti)
+overlay.addEventListener("click", () => { if (!gameRunning) startGame(); });
+// Klik di area game juga bisa nembak
+gameArea.addEventListener("click", () => { if (gameRunning) shoot(); });
+
+// Wrap kiri/kanan
 function movePlayer(dx) {
   const maxX = maxPlayerX();
   let next = playerX + dx;
@@ -74,17 +72,16 @@ function movePlayer(dx) {
   player.style.left = playerX + "px";
 }
 
-// ===== Shooting (pakai TOP agar stabil) =====
+// ===== Shoot (pakai TOP supaya stabil) =====
 function shoot() {
   const b = document.createElement("div");
   b.className = "bullet";
 
-  // Rect absolut -> relatif gameArea
   const p = player.getBoundingClientRect();
   const g = gameArea.getBoundingClientRect();
 
   const centerX = (p.left - g.left) + (p.width / 2) - (BULLET_W / 2);
-  const topY    = (p.top  - g.top)  - 10; // 10px di atas pesawat
+  const topY    = (p.top  - g.top)  - 10;  // tepat di atas pesawat
 
   b.style.left = centerX + "px";
   b.style.top  = topY    + "px";
@@ -93,20 +90,16 @@ function shoot() {
   bullets.push(b);
 }
 
-// ===== Enemy spawn (2 tipe: 1 & 2 poin) =====
+// ===== Enemy spawn (type1=1 poin, type2=2 poin) =====
 function spawnEnemy() {
   if (!gameRunning) return;
-
   const e = document.createElement("div");
   e.className = "enemy";
-
-  const type = Math.random() < 0.7 ? 1 : 2; // 70% tipe-1, 30% tipe-2
+  const type = Math.random() < 0.7 ? 1 : 2;
   e.dataset.type = type;
   e.style.backgroundImage = `url('Enemy ${type}.png')`;
-
   e.style.left = (Math.random() * (gameArea.clientWidth - 50)) + "px";
   e.style.top  = "-50px";
-
   gameArea.appendChild(e);
   enemies.push(e);
 }
@@ -115,57 +108,46 @@ function spawnEnemy() {
 function updateGame() {
   if (!gameRunning) return;
 
-  // Bullets: naik (kurangi top)
+  // Bullets naik (kurangi top)
   bullets.forEach((b, i) => {
     const y = parseInt(b.style.top, 10);
-    if (y < -30) {
-      b.remove();
-      bullets.splice(i, 1);
-    } else {
-      b.style.top = (y - speed.bullet) + "px";
-    }
+    if (y < -30) { b.remove(); bullets.splice(i, 1); }
+    else b.style.top = (y - speed.bullet) + "px";
   });
 
-  // Enemies: jatuh
+  // Enemies jatuh
   enemies.forEach((e, i) => {
     const t = parseInt(e.style.top, 10);
-    if (t > gameArea.clientHeight) {
-      e.remove();
-      enemies.splice(i, 1);
-    } else {
-      e.style.top = (t + speed.enemy) + "px";
-    }
+    if (t > gameArea.clientHeight) { e.remove(); enemies.splice(i, 1); }
+    else e.style.top = (t + speed.enemy) + "px";
   });
 
-  // Bullet vs Enemy
+  // Collision bullet vs enemy
   bullets.forEach((b, bi) => {
     enemies.forEach((e, ei) => {
       const br = b.getBoundingClientRect();
       const er = e.getBoundingClientRect();
-      const collide = br.left < er.right && br.right > er.left && br.top < er.bottom && br.bottom > er.top;
-      if (collide) {
+      if (br.left < er.right && br.right > er.left && br.top < er.bottom && br.bottom > er.top) {
         const points = Number(e.dataset.type) === 2 ? 2 : 1;
         e.remove(); b.remove();
         enemies.splice(ei, 1); bullets.splice(bi, 1);
+        score += points; scoreEl.textContent = score;
 
-        score += points;
-        scoreEl.textContent = score;
-
-        if (score % 10 === 0) {
+        if (score % 10 === 0) { // naik level
           level++; levelEl.textContent = level;
-          speed.enemy += 0.7;
-          speed.bullet += 0.3;
+          speed.enemy += 0.7; speed.bullet += 0.3;
         }
       }
     });
   });
 
-  // Enemy hits player -> Game Over
+  // Enemy kena player -> game over
   enemies.forEach((e) => {
     const er = e.getBoundingClientRect();
     const pr = player.getBoundingClientRect();
-    const hit = er.left < pr.right && er.right > pr.left && er.top < pr.bottom && er.bottom > pr.top;
-    if (hit) endGame(true);
+    if (er.left < pr.right && er.right > pr.left && er.top < pr.bottom && er.bottom > pr.top) {
+      endGame(true);
+    }
   });
 
   gameLoopId = requestAnimationFrame(updateGame);
@@ -184,7 +166,7 @@ function startGame() {
   timerEl.textContent = `Time: ${timeLeft}`;
   if (timerMirror) timerMirror.textContent = timeLeft;
 
-  // Reset entitas & posisi player
+  // reset
   gameArea.querySelectorAll(".bullet,.enemy").forEach(el => el.remove());
   bullets = []; enemies = [];
   centerPlayer();
@@ -203,24 +185,23 @@ function startGame() {
 
 function endGame(hit) {
   gameRunning = false;
-  clearInterval(timer);
-  clearInterval(spawnInterval);
+  clearInterval(timer); clearInterval(spawnInterval);
   cancelAnimationFrame(gameLoopId);
 
+  // highscore
   const best = Number(localStorage.getItem("rialoHighscore") || 0);
   if (score > best) {
     localStorage.setItem("rialoHighscore", score);
     highscoreEl.textContent = score;
   }
 
-  // Teks overlay rapi (2 baris)
-  if (hit) {
-    showOverlay('<div>Game Over</div><div>Press <span>Enter</span> to play again</div>');
-  } else {
-    showOverlay('<div>Time’s up</div><div>Press <span>Enter</span> to play again</div>');
-  }
+  // Overlay 2 baris rapi
+  const msg = hit
+    ? '<div>Game Over</div><div>Press <span>Enter</span> to play again</div>'
+    : '<div>Time’s up</div><div>Press <span>Enter</span> to play again</div>';
+  showOverlay(msg);
 }
 
 // Init
-showOverlay();                         // tampilkan "Press Enter to play" saat load
+showOverlay(); // tampil "Press Enter to play"
 window.addEventListener("resize", () => { if (!gameRunning) centerPlayer(); });
