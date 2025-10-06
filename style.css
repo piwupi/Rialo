@@ -1,204 +1,50 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
-}
-
-body {
-  background: linear-gradient(180deg, #e6f8ff 0%, #bde5f3 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  color: #00324d;
+/* Bright theme */
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,Arial}
+body{
+  background:linear-gradient(180deg,#e6f8ff 0%,#bde5f3 100%);
+  height:100vh;display:flex;justify-content:center;align-items:center;color:#00324d
 }
 
 /* Layout */
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 90%;
-  max-width: 800px;
+.container{display:flex;gap:20px;width:92%;max-width:960px;flex-direction:column}
+@media (min-width:700px){.container{flex-direction:row}}
+
+.game-area{flex:2;display:flex;flex-direction:column;align-items:center}
+#gameArea{
+  position:relative;width:400px;height:700px;
+  background:linear-gradient(180deg,#bdf2ff,#8de4ff);
+  border:3px solid #00bcd4;border-radius:12px;overflow:hidden;box-shadow:0 0 25px #00bcd4a0
 }
 
-@media (min-width: 600px) {
-  .container {
-    flex-direction: row;
-  }
+/* Player (Logo) */
+#player{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  width:90px;height:90px;background:url('logo.png') center/contain no-repeat
 }
 
-/* Game area */
-.game-area {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* Bullets & Enemies */
+.bullet{
+  position:absolute;width:5px;height:20px;background:#00bcd4;border-radius:2px;box-shadow:0 0 10px #00bcd4
 }
-
-#gameArea {
-  position: relative;
-  width: 400px;
-  height: 700px;
-  background: linear-gradient(180deg, #bdf2ff 0%, #8de4ff 100%);
-  border: 3px solid #00bcd4;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 0 25px #00bcd4a0;
-}
-
-/* Player */
-#player {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90px; /* ⬆️ dulu 60px */
-  height: 90px; /* ⬆️ lebih besar */
-  background: url('logo.png') center/contain no-repeat;
-}
-
-/* Bullet */
-.bullet {
-  position: absolute;
-  width: 5px;
-  height: 20px;
-  background: #00bcd4;
-  border-radius: 2px;
-  box-shadow: 0 0 10px #00bcd4;
-}
-
-/* Enemy */
-.enemy {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  background: #ff1744;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #ff3d00;
-}
-
-.info-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  background: transparent;
-}
-
-/* Kotak umum */
-.card {
-  background: #ffffffee;
-  border: 2px solid #00bcd4aa;
-  border-radius: 12px;
-  box-shadow: 0 0 15px #00bcd420;
-  padding: 15px 20px;
-  color: #00324d;
-}
-
-/* Judul utama */
-.stats-card h2 {
-  color: #007a9b;
-  margin-bottom: 10px;
-  font-size: 20px;
-}
-
-/* Statistik */
-.stat p {
-  font-size: 16px;
-  margin: 5px 0;
-}
-
-/* Tombol & timer */
-.control-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#timerBox {
-  font-size: 16px;
-  color: #005f73;
-}
-
-.btn.small {
-  background: #00bcd4;
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
-/* Panduan */
-.guide-card h3 {
-  color: #007a9b;
-  margin-bottom: 8px;
-  font-size: 18px;
-}
-
-.guide-card ul {
-  margin-left: 18px;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.guide-card li {
-  margin-bottom: 6px;
+.enemy{
+  position:absolute;width:40px;height:40px;background:#ff1744;border-radius:50%;box-shadow:0 0 10px #ff3d00
 }
 
 /* Controls */
-.controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 400px;
-  margin-top: 10px;
-}
-
-.btn {
-  background: #00bcd4;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.btn:hover {
-  opacity: 0.85;
-}
-
-.btn.small {
-  background: #0097a7;
-  color: #fff;
-  margin-top: 8px;
-}
-
-/* bright theme */
-body{background:linear-gradient(180deg,#e6f8ff 0%,#bde5f3 100%);height:100vh;margin:0;
-display:flex;justify-content:center;align-items:center;color:#00324d;font-family:Inter,system-ui,Arial}
-.container{display:flex;gap:20px;width:92%;max-width:960px;flex-direction:column}
-@media(min-width:700px){.container{flex-direction:row}}
-
-.game-area{flex:2;display:flex;flex-direction:column;align-items:center}
-#gameArea{position:relative;width:400px;height:700px;background:linear-gradient(180deg,#bdf2ff,#8de4ff);
-border:3px solid #00bcd4;border-radius:12px;overflow:hidden;box-shadow:0 0 25px #00bcd4a0}
-#player{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);width:90px;height:90px;
-background:url('logo.png') center/contain no-repeat}
-.bullet{position:absolute;width:5px;height:20px;background:#00bcd4;border-radius:2px;box-shadow:0 0 10px #00bcd4}
-.enemy{position:absolute;width:40px;height:40px;background:#ff1744;border-radius:50%;box-shadow:0 0 10px #ff3d00}
 .controls{display:flex;justify-content:space-between;align-items:center;width:400px;margin-top:10px}
 .btn{background:#00bcd4;border:none;padding:6px 14px;border-radius:6px;color:#fff;font-weight:600;cursor:pointer}
+.btn:hover{opacity:.88}
 .btn.small{background:#0097a7}
 
-/* right panel as cards */
+/* Right panel as cards */
 .info-panel{flex:1;display:flex;flex-direction:column;gap:15px}
-.card{background:#ffffffee;border:2px solid #00bcd4aa;border-radius:12px;box-shadow:0 0 15px #00bcd420;padding:16px 18px}
+.card{
+  background:#ffffffee;border:2px solid #00bcd4aa;border-radius:12px;
+  box-shadow:0 0 15px #00bcd420;padding:16px 18px
+}
 .stats-card h2{color:#007a9b;margin:0 0 8px}
 .stat p{margin:4px 0}
 .control-card{display:flex;justify-content:space-between;align-items:center}
+#timerBox{color:#005f73}
 .guide-card h3{color:#007a9b;margin:0 0 6px}
-.guide-card ul{margin:0 0 0 18px;line-height:1.6}
+.guide-card ul{margin-left:18px;line-height:1.6}
