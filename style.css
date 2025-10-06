@@ -3,18 +3,18 @@
 html, body { height: 100%; }
 body {
   margin: 0;
-  padding-top: 40px;  /* 🔸 tambahkan jarak atas global */
   background: url('Background.png') center/cover fixed no-repeat;
   color: #00324d;
   font-family: "Press Start 2P", system-ui, Arial, sans-serif;
   display: flex;
   flex-direction: column;
-  gap: 18px;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center; /* 🔸 Semua konten ke tengah vertikal */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   user-select: none;
+  gap: 30px; /* beri jarak antar judul dan game */
+  padding-bottom: 40px; /* 🔸 beri ruang bawah agar tidak mentok */
 }
 
 /* Pixel font sizing */
@@ -36,7 +36,7 @@ body {
   padding: 0;
   text-align: center;
   letter-spacing: 1.5px;
-  margin-bottom: 10px;
+  margin: 0;
 }
 
 /* ===== Layout ===== */
@@ -46,7 +46,6 @@ body {
   width: 92%;
   max-width: 980px;
   flex-direction: column;
-  margin-top: 40px; /* 🔸 game dan panel turun */
 }
 
 @media (min-width: 760px) {
@@ -54,7 +53,6 @@ body {
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
-    margin-top: 60px; /* 🔸 layar besar juga turun */
   }
 }
 
@@ -183,8 +181,9 @@ body {
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .container {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
   }
   .info-panel {
     max-width: 400px;
