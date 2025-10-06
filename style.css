@@ -3,11 +3,11 @@
 html, body { height: 100%; }
 body{
   margin:0;
-  /* BACKGROUND PALING BELAKANG */
   background: url('Background.png') center/cover fixed no-repeat;
   color:#00324d;
   font-family: "Press Start 2P", system-ui, Arial, sans-serif;
-  display:flex; justify-content:center; align-items:center;
+  display:flex; flex-direction:column; gap:18px;
+  align-items:center; justify-content:flex-start;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
   user-select: none;
 }
@@ -20,27 +20,49 @@ body{
   --cyan:#00bcd4; --cyan-dark:#0097a7;
 }
 
+/* ===== Title ===== */
+.site-title{
+  margin-top:20px;
+  padding:10px 14px;
+  background:#ffffffd9;
+  border:2px solid rgba(0,0,0,.06);
+  border-radius:12px;
+  box-shadow:0 6px 16px rgba(0,0,0,.08);
+  font-size:20px;
+  letter-spacing:1px;
+}
+
 /* ===== Layout ===== */
 .container{display:flex;gap:20px;width:92%;max-width:980px;flex-direction:column}
 @media (min-width:760px){.container{flex-direction:row}}
 
 .game-area{flex:2;display:flex;flex-direction:column;align-items:center}
 
-/* Kotak game (TANPA background-2) */
+/* Kotak game — sisi (border) putih */
 #gameArea{
   position:relative;
   width:400px; height:700px;
   background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.72));
-  border:3px solid var(--cyan);
+  border:3px solid #ffffff;               /* putih */
   border-radius:12px;
   overflow:hidden;
-  box-shadow:0 0 25px rgba(0,188,212,.5);
+  box-shadow:0 0 22px rgba(0,188,212,.55); /* glow tetap biru lembut */
 }
 
 /* Semua entitas game di atas background */
-#gameArea > * { z-index: 1; }
+#gameArea > * { position:relative; z-index:1; }
 
-/* Player (Logo) — dikontrol JS */
+/* Overlay "Enter to play" */
+.overlay{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  background: rgba(0,0,0,.28);
+  color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.4);
+  font-size:14px; letter-spacing:.5px;
+}
+.overlay span{ color:#00e0ff; }
+
+/* Player */
 #player{
   position:absolute; bottom:40px; left:0;
   width:90px; height:90px;
@@ -49,34 +71,24 @@ body{
   z-index:2;
 }
 
-/* Bullets */
+/* Bullet */
 .bullet{
   position:absolute; width:5px; height:20px;
   background:var(--cyan); border-radius:2px; box-shadow:0 0 10px var(--cyan);
-  z-index:3; /* paling atas */
+  z-index:3;
 }
 
-/* Enemies pakai PNG tanpa latar */
+/* Enemies */
 .enemy{
   position:absolute; width:50px; height:50px;
   background-position:center; background-repeat:no-repeat; background-size:contain;
-  background-color:transparent!important; border-radius:0!important; box-shadow:none!important;
   image-rendering: pixelated;
   z-index:2;
 }
 
-/* Controls */
-.controls{
-  display:flex; justify-content:space-between; align-items:center;
-  width:400px; margin-top:10px; font-size:var(--px);
-}
-.btn{
-  background:var(--cyan); border:none; padding:8px 14px; border-radius:6px;
-  color:#fff; cursor:pointer; font-size:var(--px); letter-spacing:.5px;
-}
-.btn:hover{ filter:brightness(.95) }
-.btn:active{ transform:translateY(1px) }
-.btn.small{ background:var(--cyan-dark) }
+/* Time kecil di bawah untuk mobile (opsional) */
+.time-mobile{ display:none; margin-top:8px; font-size:var(--px); }
+@media (max-width:760px){ .time-mobile{ display:block; } }
 
 /* ===== Right panel (WHITE cards) ===== */
 .info-panel{flex:1;display:flex;flex-direction:column;gap:16px}
@@ -86,14 +98,16 @@ body{
 }
 .stats-card h2{color:#007a9b;margin:0 0 10px;font-size:var(--px-lg)}
 .stat p{margin:6px 0;font-size:var(--px)}
-.control-card{display:flex;justify-content:space-between;align-items:center;font-size:var(--px)}
-#timerBox{color:#005f73}
-.guide-card h3{color:#007a9b;margin:0 0 10px;font-size:var(--px)}
-.guide-card ul{margin:0 0 0 18px;line-height:1.6;font-size:var(--px-sm)}
+
+.time-card .time-center{
+  width:100%; text-align:center; font-size:var(--px-lg);
+}
+
+.guide-card h3{color:#007a9b;margin:0 0 10px;font-size:var(--px-lg)}
+.guide-card ul{margin:0 0 0 18px;line-height:1.8;font-size:var(--px)}
 .guide-card li{margin-bottom:6px}
 
 /* ===== Responsif (mobile portrait) ===== */
 @media (max-width:420px){
   #gameArea{ width:320px; height:560px; }
-  .controls{ width:320px; }
 }
