@@ -13,36 +13,36 @@ let enemies = [];
 let score = 0;
 let level = 1;
 let timeLeft = 60;
-let playerX = 170;
+let playerX = 160;
 let gameRunning = false;
 let timer, spawnInterval, gameLoopId;
 let highscore = localStorage.getItem("rialoHighscore") || 0;
 highscoreEl.textContent = highscore;
 
-// 💨 Base speed values
-const speed = { bullet: 15, enemy: 3 }; // enemy slower initially
-let playerSpeed = 40; // ⬅️ doubled from 20 → 40
+// ⚙️ base speeds
+const speed = { bullet: 15, enemy: 3 };
+let playerSpeed = 40;
 
-// 🎮 Movement controls
+// 🎮 movement
 document.addEventListener("keydown", (e) => {
   if (!gameRunning) return;
   if (e.key === "ArrowLeft" && playerX > 0) playerX -= playerSpeed;
-  if (e.key === "ArrowRight" && playerX < 340) playerX += playerSpeed;
+  if (e.key === "ArrowRight" && playerX < 320) playerX += playerSpeed;
   if (e.key === " ") shoot();
   player.style.left = playerX + "px";
 });
 
-// 🔫 Shooting
+// 🔫 shoot
 function shoot() {
   const bullet = document.createElement("div");
   bullet.classList.add("bullet");
-  bullet.style.left = playerX + 28 + "px";
-  bullet.style.bottom = "80px";
+  bullet.style.left = playerX + 45 + "px"; // adjusted for larger logo
+  bullet.style.bottom = "120px";
   gameArea.appendChild(bullet);
   bullets.push(bullet);
 }
 
-// 👾 Spawn enemies
+// 👾 spawn enemies
 function spawnEnemy() {
   if (!gameRunning) return;
   const enemy = document.createElement("div");
@@ -53,7 +53,7 @@ function spawnEnemy() {
   enemies.push(enemy);
 }
 
-// 🔁 Game loop
+// 🔁 main loop
 function updateGame() {
   if (!gameRunning) return;
 
@@ -75,7 +75,7 @@ function updateGame() {
     } else e.style.top = top + speed.enemy + "px";
   });
 
-  // detect collision
+  // bullet hits enemy
   bullets.forEach((b, bi) => {
     enemies.forEach((e, ei) => {
       const bRect = b.getBoundingClientRect();
@@ -93,12 +93,10 @@ function updateGame() {
         score++;
         scoreEl.textContent = score;
 
-        // 🧠 level up system: increase enemy speed every 10 points
+        // speed up gradually
         if (score % 10 === 0) {
           level++;
           levelEl.textContent = level;
-
-          // slowly ramp up difficulty
           speed.enemy += 0.7;
           speed.bullet += 0.3;
         }
@@ -106,10 +104,24 @@ function updateGame() {
     });
   });
 
+  // enemy hits player → game over
+  enemies.forEach((e) => {
+    const eRect = e.getBoundingClientRect();
+    const pRect = player.getBoundingClientRect();
+    if (
+      eRect.left < pRect.right &&
+      eRect.right > pRect.left &&
+      eRect.top < pRect.bottom &&
+      eRect.bottom > pRect.top
+    ) {
+      endGame(true); // true = hit by enemy
+    }
+  });
+
   gameLoopId = requestAnimationFrame(updateGame);
 }
 
-// ▶️ Start game
+// ▶️ start
 function startGame() {
   if (gameRunning) return;
   gameRunning = true;
@@ -125,23 +137,22 @@ function startGame() {
   startBtn.disabled = true;
   pauseBtn.disabled = false;
 
-  // clean up previous
+  // reset elements
   gameArea.querySelectorAll(".bullet, .enemy").forEach((el) => el.remove());
   bullets = [];
   enemies = [];
 
-  // spawn enemies + timer
   spawnInterval = setInterval(spawnEnemy, 900);
   timer = setInterval(() => {
     timeLeft--;
     timerEl.textContent = `Time: ${timeLeft}`;
-    if (timeLeft <= 0) endGame();
+    if (timeLeft <= 0) endGame(false);
   }, 1000);
 
   updateGame();
 }
 
-// ⏸ Pause game
+// ⏸ pause
 function pauseGame() {
   gameRunning = false;
   clearInterval(timer);
@@ -151,14 +162,19 @@ function pauseGame() {
   pauseBtn.disabled = true;
 }
 
-// ⏹ End game
-function endGame() {
+// 🧨 game over
+function endGame(hitByEnemy = false) {
   gameRunning = false;
   clearInterval(timer);
   clearInterval(spawnInterval);
   cancelAnimationFrame(gameLoopId);
 
-  alert(`Time’s up! Final Score: ${score}`);
+  if (hitByEnemy) {
+    alert("You got hit! Game over!");
+  } else {
+    alert(`Time’s up! Final Score: ${score}`);
+  }
+
   if (score > highscore) {
     localStorage.setItem("rialoHighscore", score);
     highscoreEl.textContent = score;
@@ -167,12 +183,11 @@ function endGame() {
   pauseBtn.disabled = true;
 }
 
-// 🧹 Reset best
+// 🧹 reset best
 resetBtn.addEventListener("click", () => {
   localStorage.removeItem("rialoHighscore");
   highscoreEl.textContent = 0;
 });
 
-// 🎬 Buttons
 startBtn.addEventListener("click", startGame);
 pauseBtn.addEventListener("click", pauseGame);
