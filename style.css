@@ -54,28 +54,15 @@ body{
 
 /* ===== Overlay Tengah (FINAL) ===== */
 #overlay{
-  position:absolute;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  background:rgba(0,0,0,.4);
-  color:#fff;
-  z-index:5;
+  position:absolute; inset:0; display:flex; justify-content:center; align-items:center;
+  text-align:center; background:rgba(0,0,0,.4); color:#fff; z-index:5;
 }
-
 #overlay .content{
   font-family:"Press Start 2P", system-ui, Arial, sans-serif;
-  font-size:14px;
-  line-height:1.8;        /* rapi untuk 1/2 baris */
-  white-space:nowrap;      /* tidak pecah aneh */
+  font-size:14px; line-height:1.8; white-space:nowrap;
 }
+#overlay .content span{ color:#00e0ff; padding:0 6px; }
 
-#overlay .content span{
-  color:#00e0ff;
-  padding:0 6px;          /* memberi jarak “Enter” dari kata di kiri/kanan */
-}
 
 /* Player */
 #player{
