@@ -1,6 +1,8 @@
 // =================== RIALO SPACE SHOOTER ===================
 
-// Elements
+"use strict";
+
+// ===== Elements =====
 const player      = document.getElementById("player");
 const gameArea    = document.getElementById("gameArea");
 const overlay     = document.getElementById("overlay");
@@ -10,19 +12,21 @@ const highscoreEl = document.getElementById("highscore");
 const timerEl     = document.getElementById("timer");
 const timerMirror = document.getElementById("timerMirror");
 
-// State
-let bullets = [], enemies = [];
+// ===== State =====
+let bullets = [];
+let enemies = [];
 let score = 0, level = 1, timeLeft = 60, playerX = 0, gameRunning = false;
 let timer, spawnInterval, gameLoopId;
-let highscore = Number(localStorage.getItem("rialoHighscore") || 0);
-highscoreEl.textContent = highscore;
 
-// Constants
-const speed = { bullet: 15, enemy: 3 };
-const STEP = 40;          // langkah gerak player
-const BULLET_W = 5;       // lebar peluru (untuk hitung center)
+const savedBest = Number(localStorage.getItem("rialoHighscore") || 0);
+highscoreEl.textContent = savedBest;
 
-// ---------- Helpers ----------
+// ===== Constants =====
+const speed = { bullet: 15, enemy: 3 }; // kecepatan awal
+const STEP = 40;                         // langkah gerak player
+const BULLET_W = 5;                      // lebar peluru (untuk center)
+
+// ===== Helpers =====
 const maxPlayerX = () => gameArea.clientWidth - player.clientWidth;
 
 function centerPlayer() {
@@ -30,15 +34,17 @@ function centerPlayer() {
   player.style.left = playerX + "px";
 }
 
-function showOverlay(text = "Press <span>Enter</span> to play") {
-  overlay.innerHTML = text;
+function showOverlay(html) {
+  const text = html || 'Press <span>Enter</span> to play';
+  overlay.innerHTML = `<div class="content">${text}</div>`;
   overlay.style.display = "flex";
 }
+
 function hideOverlay() {
   overlay.style.display = "none";
 }
 
-// ---------- Controls ----------
+// ===== Controls =====
 document.addEventListener("keydown", (e) => {
   // Enter untuk mulai saat belum running
   if (!gameRunning && (e.code === "Enter" || e.key === "Enter")) {
@@ -68,12 +74,12 @@ function movePlayer(dx) {
   player.style.left = playerX + "px";
 }
 
-// ---------- Shooting (pakai TOP agar stabil) ----------
+// ===== Shooting (pakai TOP agar stabil) =====
 function shoot() {
   const b = document.createElement("div");
   b.className = "bullet";
 
-  // Posisi absolut -> relatif ke gameArea
+  // Rect absolut -> relatif gameArea
   const p = player.getBoundingClientRect();
   const g = gameArea.getBoundingClientRect();
 
@@ -87,13 +93,14 @@ function shoot() {
   bullets.push(b);
 }
 
-// ---------- Enemy spawn (2 tipe: 1 & 2 poin) ----------
+// ===== Enemy spawn (2 tipe: 1 & 2 poin) =====
 function spawnEnemy() {
   if (!gameRunning) return;
+
   const e = document.createElement("div");
   e.className = "enemy";
 
-  const type = Math.random() < 0.7 ? 1 : 2;  // 70% tipe-1, 30% tipe-2
+  const type = Math.random() < 0.7 ? 1 : 2; // 70% tipe-1, 30% tipe-2
   e.dataset.type = type;
   e.style.backgroundImage = `url('Enemy ${type}.png')`;
 
@@ -104,46 +111,50 @@ function spawnEnemy() {
   enemies.push(e);
 }
 
-// ---------- Main Loop ----------
+// ===== Main Loop =====
 function updateGame() {
   if (!gameRunning) return;
 
-  // Bullets (bergerak ke atas dengan mengurangi top)
+  // Bullets: naik (kurangi top)
   bullets.forEach((b, i) => {
-    const y = parseInt(b.style.top);
+    const y = parseInt(b.style.top, 10);
     if (y < -30) {
-      b.remove(); bullets.splice(i, 1);
+      b.remove();
+      bullets.splice(i, 1);
     } else {
       b.style.top = (y - speed.bullet) + "px";
     }
   });
 
-  // Enemies (jatuh ke bawah)
+  // Enemies: jatuh
   enemies.forEach((e, i) => {
-    const t = parseInt(e.style.top);
+    const t = parseInt(e.style.top, 10);
     if (t > gameArea.clientHeight) {
-      e.remove(); enemies.splice(i, 1);
+      e.remove();
+      enemies.splice(i, 1);
     } else {
       e.style.top = (t + speed.enemy) + "px";
     }
   });
 
-  // Bullet vs Enemy (tambah skor sesuai tipe)
+  // Bullet vs Enemy
   bullets.forEach((b, bi) => {
     enemies.forEach((e, ei) => {
       const br = b.getBoundingClientRect();
       const er = e.getBoundingClientRect();
-      if (br.left < er.right && br.right > er.left && br.top < er.bottom && br.bottom > er.top) {
+      const collide = br.left < er.right && br.right > er.left && br.top < er.bottom && br.bottom > er.top;
+      if (collide) {
         const points = Number(e.dataset.type) === 2 ? 2 : 1;
         e.remove(); b.remove();
         enemies.splice(ei, 1); bullets.splice(bi, 1);
 
-        score += points; scoreEl.textContent = score;
+        score += points;
+        scoreEl.textContent = score;
 
-        // Naik level tiap kelipatan 10 poin
         if (score % 10 === 0) {
           level++; levelEl.textContent = level;
-          speed.enemy += 0.7; speed.bullet += 0.3;
+          speed.enemy += 0.7;
+          speed.bullet += 0.3;
         }
       }
     });
@@ -153,15 +164,14 @@ function updateGame() {
   enemies.forEach((e) => {
     const er = e.getBoundingClientRect();
     const pr = player.getBoundingClientRect();
-    if (er.left < pr.right && er.right > pr.left && er.top < pr.bottom && er.bottom > pr.top) {
-      endGame(true);
-    }
+    const hit = er.left < pr.right && er.right > pr.left && er.top < pr.bottom && er.bottom > pr.top;
+    if (hit) endGame(true);
   });
 
   gameLoopId = requestAnimationFrame(updateGame);
 }
 
-// ---------- Start / End ----------
+// ===== Start / End =====
 function startGame() {
   if (gameRunning) return;
   gameRunning = true;
@@ -169,12 +179,12 @@ function startGame() {
   score = 0; level = 1; timeLeft = 60;
   speed.enemy = 3; speed.bullet = 15;
 
-  scoreEl.textContent  = 0;
-  levelEl.textContent  = 1;
-  timerEl.textContent  = `Time: ${timeLeft}`;
+  scoreEl.textContent = 0;
+  levelEl.textContent = 1;
+  timerEl.textContent = `Time: ${timeLeft}`;
   if (timerMirror) timerMirror.textContent = timeLeft;
 
-  // Reset entitas & posisikan player
+  // Reset entitas & posisi player
   gameArea.querySelectorAll(".bullet,.enemy").forEach(el => el.remove());
   bullets = []; enemies = [];
   centerPlayer();
@@ -193,7 +203,8 @@ function startGame() {
 
 function endGame(hit) {
   gameRunning = false;
-  clearInterval(timer); clearInterval(spawnInterval);
+  clearInterval(timer);
+  clearInterval(spawnInterval);
   cancelAnimationFrame(gameLoopId);
 
   const best = Number(localStorage.getItem("rialoHighscore") || 0);
@@ -202,11 +213,14 @@ function endGame(hit) {
     highscoreEl.textContent = score;
   }
 
-  showOverlay(hit
-    ? 'Game Over — Press <span>Enter</span> to play again'
-    : 'Time’s up — Press <span>Enter</span> to play again');
+  // Teks overlay rapi (2 baris)
+  if (hit) {
+    showOverlay('<div>Game Over</div><div>Press <span>Enter</span> to play again</div>');
+  } else {
+    showOverlay('<div>Time’s up</div><div>Press <span>Enter</span> to play again</div>');
+  }
 }
 
-// Init overlay on load
-showOverlay();
+// Init
+showOverlay();                         // tampilkan "Press Enter to play" saat load
 window.addEventListener("resize", () => { if (!gameRunning) centerPlayer(); });
