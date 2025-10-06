@@ -1,81 +1,93 @@
-const gameArea = document.getElementById('gameArea');
-const player = document.getElementById('player');
-let bullets = [];
-let enemies = [];
+const logo = document.getElementById("logo");
+const startBtn = document.getElementById("startBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const scoreEl = document.getElementById("score");
+const levelEl = document.getElementById("level");
+const highscoreEl = document.getElementById("highscore");
+const resetScore = document.getElementById("resetScore");
+const timerEl = document.getElementById("timer");
+const gameArea = document.getElementById("gameArea");
 
-let playerX = window.innerWidth / 2;
-const playerSpeed = 10;
+let score = 0;
+let level = 1;
+let timeLeft = 30;
+let timer;
+let gameRunning = false;
+let moveInterval;
+let highscore = localStorage.getItem("rialoHighscore") || 0;
+highscoreEl.textContent = highscore;
 
-// Gerak kiri / kanan / tembak
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowLeft' && playerX > 0) playerX -= playerSpeed;
-  if (e.key === 'ArrowRight' && playerX < window.innerWidth - 60) playerX += playerSpeed;
-  if (e.key === ' ') shoot();
-  player.style.left = playerX + 'px';
+function randomPosition() {
+  const maxX = gameArea.clientWidth - logo.clientWidth;
+  const maxY = gameArea.clientHeight - logo.clientHeight;
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+  logo.style.left = x + "px";
+  logo.style.top = y + "px";
+}
+
+function startGame() {
+  if (gameRunning) return;
+  score = 0;
+  level = 1;
+  timeLeft = 30;
+  scoreEl.textContent = score;
+  levelEl.textContent = level;
+  timerEl.textContent = "Time: " + timeLeft;
+  gameRunning = true;
+  startBtn.disabled = true;
+  pauseBtn.disabled = false;
+
+  moveLogo();
+  timer = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = "Time: " + timeLeft;
+    if (timeLeft <= 0) endGame();
+  }, 1000);
+}
+
+function moveLogo() {
+  clearInterval(moveInterval);
+  moveInterval = setInterval(randomPosition, Math.max(300 - level * 20, 80));
+}
+
+function pauseGame() {
+  gameRunning = false;
+  clearInterval(timer);
+  clearInterval(moveInterval);
+  startBtn.disabled = false;
+  pauseBtn.disabled = true;
+}
+
+function endGame() {
+  clearInterval(timer);
+  clearInterval(moveInterval);
+  gameRunning = false;
+  startBtn.disabled = false;
+  pauseBtn.disabled = true;
+  alert("Time’s up! You scored " + score + " points.");
+  if (score > highscore) {
+    localStorage.setItem("rialoHighscore", score);
+    highscoreEl.textContent = score;
+  }
+}
+
+logo.addEventListener("click", () => {
+  if (!gameRunning) return;
+  score++;
+  scoreEl.textContent = score;
+
+  if (score % 10 === 0) {
+    level++;
+    levelEl.textContent = level;
+    moveLogo();
+  }
+  randomPosition();
 });
 
-function shoot() {
-  const bullet = document.createElement('div');
-  bullet.classList.add('bullet');
-  bullet.style.left = playerX + 28 + 'px';
-  bullet.style.bottom = '70px';
-  gameArea.appendChild(bullet);
-  bullets.push(bullet);
-}
-
-function spawnEnemy() {
-  const enemy = document.createElement('div');
-  enemy.classList.add('enemy');
-  enemy.style.left = Math.random() * (window.innerWidth - 40) + 'px';
-  enemy.style.top = '0px';
-  gameArea.appendChild(enemy);
-  enemies.push(enemy);
-}
-
-function gameLoop() {
-  // Gerakkan peluru
-  bullets.forEach((b, i) => {
-    let bottom = parseInt(b.style.bottom);
-    if (bottom > window.innerHeight) {
-      b.remove();
-      bullets.splice(i, 1);
-    } else {
-      b.style.bottom = bottom + 10 + 'px';
-    }
-  });
-
-  // Gerakkan musuh
-  enemies.forEach((e, i) => {
-    let top = parseInt(e.style.top);
-    if (top > window.innerHeight) {
-      e.remove();
-      enemies.splice(i, 1);
-    } else {
-      e.style.top = top + 2 + 'px';
-    }
-  });
-
-  // Deteksi tabrakan
-  bullets.forEach((b, bi) => {
-    enemies.forEach((e, ei) => {
-      const bRect = b.getBoundingClientRect();
-      const eRect = e.getBoundingClientRect();
-      if (
-        bRect.left < eRect.right &&
-        bRect.right > eRect.left &&
-        bRect.top < eRect.bottom &&
-        bRect.bottom > eRect.top
-      ) {
-        e.remove();
-        b.remove();
-        enemies.splice(ei, 1);
-        bullets.splice(bi, 1);
-      }
-    });
-  });
-
-  requestAnimationFrame(gameLoop);
-}
-
-setInterval(spawnEnemy, 1500);
-gameLoop();
+startBtn.addEventListener("click", startGame);
+pauseBtn.addEventListener("click", pauseGame);
+resetScore.addEventListener("click", () => {
+  localStorage.removeItem("rialoHighscore");
+  highscoreEl.textContent = 0;
+});
