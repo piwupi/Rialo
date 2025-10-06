@@ -34,10 +34,32 @@ body{
 }
 
 /* ===== Layout ===== */
-.container{display:flex;gap:20px;width:92%;max-width:980px;flex-direction:column}
-@media (min-width:760px){.container{flex-direction:row}}
+/* ===== Layout (centered) ===== */
+.container{
+  /* dari flex → grid supaya gampang disejajarkan */
+  display:grid;
+  grid-template-columns: 400px minmax(300px, 360px); /* kolom: game | panel kanan */
+  gap:28px;
+  justify-content:center;   /* seluruh grid di tengah halaman */
+  align-items:start;        /* align atas agar panel segaris dengan game */
+  width:92%;
+  max-width:980px;
+  margin-inline:auto;
+}
 
-.game-area{flex:2;display:flex;flex-direction:column;align-items:center}
+.game-area{
+  display:flex;
+  flex-direction:column;
+  align-items:center;  /* pastikan kotak game benar-benar center di kolomnya */
+}
+
+.info-panel{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  width:100%;          /* kartu mengisi kolom kanan */
+}
+.info-panel .card{ width:100%; }
 
 /* Kotak game — sisi (border) putih */
 #gameArea{
@@ -114,6 +136,13 @@ body{
 .guide-card li{ margin-bottom:6px; }
 
 /* ===== Responsif (mobile portrait) ===== */
-@media (max-width:420px){
-  #gameArea{ width:320px; height:560px; }
+@media (max-width: 900px){
+  .container{
+    grid-template-columns: 1fr;  /* tumpuk vertikal */
+    justify-content:center;
+  }
+  .info-panel{
+    max-width: 400px;   /* lebar kartu mengikuti game */
+    margin: 0 auto;     /* tetap center */
+  }
 }
