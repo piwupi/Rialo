@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rialo Space Shooter</title>
+
+  <!-- Pixel font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -11,6 +17,7 @@
     <!-- LEFT: GAME -->
     <div class="game-area">
       <div id="gameArea">
+        <!-- background-2 ada di CSS lewat ::before -->
         <div id="player"></div>
       </div>
       <div class="controls">
@@ -20,7 +27,7 @@
       </div>
     </div>
 
-    <!-- RIGHT: INFO -->
+    <!-- RIGHT: INFO (white panels) -->
     <div class="info-panel">
       <div class="card stats-card">
         <h2>Rialo Space Shooter</h2>
@@ -39,10 +46,11 @@
       <div class="card guide-card">
         <h3>How to Play</h3>
         <ul>
-          <li>Move left or right with the arrow keys.</li>
-          <li>Press Space to shoot enemies.</li>
-          <li>Difficulty ramps up every 10 points.</li>
-          <li>The game ends when the timer hits zero.</li>
+          <li>Move with the arrow keys.</li>
+          <li>Press Space to shoot.</li>
+          <li>Enemy 1 = 1 point, Enemy 2 = 2 points.</li>
+          <li>Speed ramps up every 10 points.</li>
+          <li>Timer hits zero = game over.</li>
         </ul>
       </div>
     </div>
