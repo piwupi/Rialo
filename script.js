@@ -1,93 +1,149 @@
-const logo = document.getElementById("logo");
-const startBtn = document.getElementById("startBtn");
-const pauseBtn = document.getElementById("pauseBtn");
-const scoreEl = document.getElementById("score");
-const levelEl = document.getElementById("level");
-const highscoreEl = document.getElementById("highscore");
-const resetScore = document.getElementById("resetScore");
-const timerEl = document.getElementById("timer");
-const gameArea = document.getElementById("gameArea");
+const player = document.getElementById('player');
+const gameArea = document.getElementById('gameArea');
+const scoreEl = document.getElementById('score');
+const levelEl = document.getElementById('level');
+const highscoreEl = document.getElementById('highscore');
+const startBtn = document.getElementById('startBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const timerEl = document.getElementById('timer');
+const resetBtn = document.getElementById('resetBtn');
 
+let bullets = [];
+let enemies = [];
 let score = 0;
 let level = 1;
-let timeLeft = 30;
-let timer;
+let timeLeft = 60;
+let playerX = 170;
 let gameRunning = false;
-let moveInterval;
-let highscore = localStorage.getItem("rialoHighscore") || 0;
+let timer, spawnInterval, gameLoopId;
+let highscore = localStorage.getItem('rialoHighscore') || 0;
 highscoreEl.textContent = highscore;
 
-function randomPosition() {
-  const maxX = gameArea.clientWidth - logo.clientWidth;
-  const maxY = gameArea.clientHeight - logo.clientHeight;
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
-  logo.style.left = x + "px";
-  logo.style.top = y + "px";
+const speed = { bullet: 15, enemy: 5 };
+
+document.addEventListener('keydown', (e) => {
+  if (!gameRunning) return;
+  if (e.key === 'ArrowLeft' && playerX > 0) playerX -= 20;
+  if (e.key === 'ArrowRight' && playerX < 340) playerX += 20;
+  if (e.key === ' ') shoot();
+  player.style.left = playerX + 'px';
+});
+
+function shoot() {
+  const bullet = document.createElement('div');
+  bullet.classList.add('bullet');
+  bullet.style.left = playerX + 28 + 'px';
+  bullet.style.bottom = '80px';
+  gameArea.appendChild(bullet);
+  bullets.push(bullet);
+}
+
+function spawnEnemy() {
+  const enemy = document.createElement('div');
+  enemy.classList.add('enemy');
+  enemy.style.left = Math.random() * 360 + 'px';
+  enemy.style.top = '-40px';
+  gameArea.appendChild(enemy);
+  enemies.push(enemy);
+}
+
+function updateGame() {
+  bullets.forEach((b, i) => {
+    let bottom = parseInt(b.style.bottom);
+    if (bottom > 700) {
+      b.remove();
+      bullets.splice(i, 1);
+    } else b.style.bottom = bottom + speed.bullet + 'px';
+  });
+
+  enemies.forEach((e, i) => {
+    let top = parseInt(e.style.top);
+    if (top > 700) {
+      e.remove();
+      enemies.splice(i, 1);
+    } else e.style.top = top + speed.enemy + 'px';
+  });
+
+  bullets.forEach((b, bi) => {
+    enemies.forEach((e, ei) => {
+      const bRect = b.getBoundingClientRect();
+      const eRect = e.getBoundingClientRect();
+      if (
+        bRect.left < eRect.right &&
+        bRect.right > eRect.left &&
+        bRect.top < eRect.bottom &&
+        bRect.bottom > eRect.top
+      ) {
+        e.remove();
+        b.remove();
+        enemies.splice(ei, 1);
+        bullets.splice(bi, 1);
+        score++;
+        scoreEl.textContent = score;
+        if (score % 10 === 0) {
+          level++;
+          levelEl.textContent = level;
+          speed.enemy += 1;
+          speed.bullet += 0.5;
+        }
+      }
+    });
+  });
+
+  gameLoopId = requestAnimationFrame(updateGame);
 }
 
 function startGame() {
   if (gameRunning) return;
+  gameRunning = true;
   score = 0;
   level = 1;
-  timeLeft = 30;
-  scoreEl.textContent = score;
-  levelEl.textContent = level;
-  timerEl.textContent = "Time: " + timeLeft;
-  gameRunning = true;
+  timeLeft = 60;
+  speed.enemy = 5;
+  speed.bullet = 15;
+  scoreEl.textContent = 0;
+  levelEl.textContent = 1;
+  timerEl.textContent = `Time: ${timeLeft}`;
   startBtn.disabled = true;
   pauseBtn.disabled = false;
 
-  moveLogo();
+  spawnInterval = setInterval(spawnEnemy, 800);
   timer = setInterval(() => {
     timeLeft--;
-    timerEl.textContent = "Time: " + timeLeft;
+    timerEl.textContent = `Time: ${timeLeft}`;
     if (timeLeft <= 0) endGame();
   }, 1000);
-}
 
-function moveLogo() {
-  clearInterval(moveInterval);
-  moveInterval = setInterval(randomPosition, Math.max(300 - level * 20, 80));
+  updateGame();
 }
 
 function pauseGame() {
   gameRunning = false;
   clearInterval(timer);
-  clearInterval(moveInterval);
+  clearInterval(spawnInterval);
+  cancelAnimationFrame(gameLoopId);
   startBtn.disabled = false;
   pauseBtn.disabled = true;
 }
 
 function endGame() {
-  clearInterval(timer);
-  clearInterval(moveInterval);
   gameRunning = false;
-  startBtn.disabled = false;
-  pauseBtn.disabled = true;
-  alert("Time’s up! You scored " + score + " points.");
+  clearInterval(timer);
+  clearInterval(spawnInterval);
+  cancelAnimationFrame(gameLoopId);
+  alert(`Time’s up! Final score: ${score}`);
   if (score > highscore) {
-    localStorage.setItem("rialoHighscore", score);
+    localStorage.setItem('rialoHighscore', score);
     highscoreEl.textContent = score;
   }
+  startBtn.disabled = false;
+  pauseBtn.disabled = true;
 }
 
-logo.addEventListener("click", () => {
-  if (!gameRunning) return;
-  score++;
-  scoreEl.textContent = score;
-
-  if (score % 10 === 0) {
-    level++;
-    levelEl.textContent = level;
-    moveLogo();
-  }
-  randomPosition();
-});
-
-startBtn.addEventListener("click", startGame);
-pauseBtn.addEventListener("click", pauseGame);
-resetScore.addEventListener("click", () => {
-  localStorage.removeItem("rialoHighscore");
+resetBtn.addEventListener('click', () => {
+  localStorage.removeItem('rialoHighscore');
   highscoreEl.textContent = 0;
 });
+
+startBtn.addEventListener('click', startGame);
+pauseBtn.addEventListener('click', pauseGame);
